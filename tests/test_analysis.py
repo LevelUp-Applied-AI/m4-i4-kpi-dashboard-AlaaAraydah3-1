@@ -6,24 +6,31 @@ Write at least 3 tests:
 3. test_statistical_test_returns_pvalue — run_statistical_tests returns results with p-values
 """
 import pytest
-
+from analysis import connect_db, extract_data, compute_kpis, run_statistical_tests
+import pandas as pd
 
 def test_extraction_returns_dataframes():
-    """Connect to the database, extract data, and verify the result is a dict of DataFrames."""
-    # TODO: Call connect_db and extract_data, then assert the result is a dict
-    #       with DataFrame values for each expected table
-    pass
-
+    engine = connect_db()
+    data = extract_data(engine)
+    assert isinstance(data, dict)
+    for table in ["customers", "products", "orders", "order_items"]:
+        assert table in data
+        assert isinstance(data[table], pd.DataFrame)
 
 def test_kpi_computation_returns_expected_keys():
-    """Compute KPIs and verify the result contains all expected KPI names."""
-    # TODO: Extract data, call compute_kpis, then assert the returned dict
-    #       contains the keys matching your 5 KPI names
-    pass
-
+    engine = connect_db()
+    data = extract_data(engine)
+    kpis = compute_kpis(data)
+    for key in ["Total Revenue", "Average Order Value", "Customer Retention Rate",
+                "Monthly Active Users", "Cohort Revenue Growth", "merged_data"]:
+        assert key in kpis
 
 def test_statistical_test_returns_pvalue():
-    """Run statistical tests and verify results include p-values."""
-    # TODO: Extract data, call run_statistical_tests, then assert at least
-    #       one result contains a numeric p-value between 0 and 1
-    pass
+    engine = connect_db()
+    data = extract_data(engine)
+    kpis = compute_kpis(data)
+    stat_results = run_statistical_tests(kpis)
+    assert "city_comparison" in stat_results
+    p_val = stat_results["city_comparison"].get("p_value")
+    assert p_val is not None
+    assert 0 <= p_val <= 1
