@@ -5,7 +5,6 @@ Write at least 3 tests:
 2. test_kpi_computation_returns_expected_keys — compute_kpis returns a dict with your 5 KPI names
 3. test_statistical_test_returns_pvalue — run_statistical_tests returns results with p-values
 """
-import pytest
 from analysis import connect_db, extract_data, compute_kpis, run_statistical_tests
 import pandas as pd
 
